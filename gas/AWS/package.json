@@ -1,0 +1,16 @@
+{
+  "name": "nomedopacote",
+  "version": "1.0.0",
+  "description": "descricaodopacote",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "JefersonBronze",
+  "license": "ISC",
+  "dependencies": {
+    "aws-iot-device-sdk": "^2.2.6",
+    "luxon": "^1.25.0",
+    "mongoose": "^5.10.9"
+  }
+}
