@@ -2,6 +2,10 @@ const awsIoT = require('aws-iot-device-sdk')
 
 const Leitura = require('./src/model/leitura')
 
+const express = require('express')
+
+const app = express()
+
 const device = awsIoT.device ({
     keyPath: "cert.key",
     certPath: "cert.pem",
@@ -12,7 +16,7 @@ const device = awsIoT.device ({
 
 function connectaws(){
     device.on("connect",()=>{
-        console.log("Conectado")
+        console.log("Conectado AWS")
         device.subscribe("ESP2CasaTiosEne/pub")
         device.publish("ESP2CasaTiosEne/pub",JSON.stringify({ confirm: 'online' }))
     })
@@ -30,12 +34,27 @@ device.on("message", async(topic, payload)=>{
     
     const {time,potencia_ApaF1,IrmsF1,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN} = await JSON.parse(payload)
     //const leituras = await JSON.parse(payload.toString())
-    console.log({potencia_ApaF1,IrmsF1,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN,time})
     //console.log({leituras})
-    console.log(await JSON.parse(payload))
-    if (potencia_ApaF1 == undefined || IrmsF1 == undefined || potencia_ApaF2 == undefined || IrmsF2 == undefined || potencia_ApaN == undefined || IrmsN == undefined) 
+    //console.log(await JSON.parse(payload))
+    if (potencia_ApaF1 == undefined || IrmsF1 == undefined || potencia_ApaF2 == undefined || IrmsF2 == undefined || potencia_ApaN == undefined || IrmsN == undefined) {
         return false
+    }
+    console.log({potencia_ApaF1,IrmsF1,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN,time})
 
-    await Leitura.create({potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, time})
+    await Leitura.create({potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, type:"eletricidade", time})
 
+})
+
+app.get('/eletricidade.csv', async (req, res)=> {
+  const eletricidade = await Leitura.find({type: 'eletricidade'}).sort({time: 'desc'}).limit(10)
+  let datagraph = ``
+  eletricidade.forEach(function(eletricidade){
+
+    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN} \n` 
+})
+  res.send(datagraph)
+})
+ 
+app.listen(3001,()=>{
+    console.log("Servidor Ene Conectado")
 })

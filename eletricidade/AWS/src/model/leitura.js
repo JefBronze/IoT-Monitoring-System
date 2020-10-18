@@ -21,6 +21,9 @@ const leituraSchema = new Schema({
     IrmsN: {
         type: Number
     },
+    type: {
+        type: String, 
+    },
     time: {
         type: Date, 
         default: Date.now

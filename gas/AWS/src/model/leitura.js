@@ -9,6 +9,9 @@ const leituraSchema = new Schema({
     volume_total: {
         type: Number
     },
+    type: {
+        type: String, 
+    },
     time: {
         type: Date, 
         default: Date.now
