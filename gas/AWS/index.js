@@ -49,10 +49,10 @@ device.on("message", async(topic, payload)=>{
 
 app.get('/gas.csv', async (req, res)=> {
     const gas = await Leitura.find({type: 'gas'}).sort({time: 'desc'}).limit(1)
-    let datagraph = ``
+    let datagraph = `time, volume_total, pulso_gas <br>`
     gas.forEach(function(gas){
 
-        datagraph += `${gas.time}, ${gas.volume_total}, ${gas.pulso_gas}\n` 
+        datagraph += `${gas.time}, ${gas.volume_total}, ${gas.pulso_gas}<br>` 
     })
     res.send(datagraph)
 })

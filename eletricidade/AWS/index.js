@@ -47,10 +47,10 @@ device.on("message", async(topic, payload)=>{
 
 app.get('/eletricidade.csv', async (req, res)=> {
   const eletricidade = await Leitura.find({type: 'eletricidade'}).sort({time: 'desc'}).limit(10)
-  let datagraph = ``
+  let datagraph = `time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN <br>`
   eletricidade.forEach(function(eletricidade){
 
-    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}\n` 
+    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}<br>` 
 })
   res.send(datagraph)
 })
