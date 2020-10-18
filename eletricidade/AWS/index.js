@@ -50,7 +50,7 @@ app.get('/eletricidade.csv', async (req, res)=> {
   let datagraph = ``
   eletricidade.forEach(function(eletricidade){
 
-    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN} \n` 
+    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}\n` 
 })
   res.send(datagraph)
 })
