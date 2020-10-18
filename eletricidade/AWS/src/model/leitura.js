@@ -2,8 +2,6 @@ const mongoose = require('../database/db')
 
 const Schema = mongoose.Schema
 
-const { DateTime } = require('luxon')
-
 const leituraSchema = new Schema({
     potencia_ApaF1:{
         type: Number
@@ -28,7 +26,7 @@ const leituraSchema = new Schema({
     },
     time: {
         type: Date, 
-        default: DateTime.local().setZone('America/Sao_Paulo')
+        default: Date.now
     }
 })
 
