@@ -12,7 +12,7 @@ const device = awsIoT.device ({
 
 function connectaws(){
     device.on("connect",()=>{
-        console.log("Conectado")
+        console.log("Conectado AWS")
         device.subscribe("ESP1CasaTiosGas/pub")
         device.publish("ESP1CasaTiosGas/pub",JSON.stringify({ confirm: 'online' }))
     })
