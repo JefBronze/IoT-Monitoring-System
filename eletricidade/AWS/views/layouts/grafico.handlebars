@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Monitoramento de Energia Elétrica GRID</title>
+    <link rel="stylesheet" href="/main.css">
+</head>
+<body>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+            <script src="https://code.highcharts.com/modules/data.js"></script>
+            <script src="https://code.highcharts.com/modules/exporting.js"></script>
+            <script src="https://code.highcharts.com/modules/export-data.js"></script>
+            <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+            
+            <figure class="highcharts-figure">
+              <div id="container"></div>
+              <p class="highcharts-description">
+              </p>
+            </figure>
+            
+            <div class="ld-row" style="display: none">
+                <label class="ld-label">
+                    Enable Polling
+                </label>
+                <input type="checkbox" checked="checked" id="enablePolling">
+            </div>
+            <div class="ld-row" style="display: none">
+                <label class="ld-label">
+                    Polling Time (Seconds)
+                </label>
+                <input class="ld-time-input" type="number" value="2" id="pollingTime">
+            </div>
+            <div class="ld-row" style="display: none">
+                <label class="ld-label">
+                    CSV URL
+                </label>
+                <input class="ld-url-input" type="text" id="fetchURL">
+            </div>
+<style>
+.highcharts-figure, .highcharts-data-table table {
+    min-width: 360px; 
+    max-width: 100%;
+    margin: 1em auto;
+  }
+  
+  .highcharts-data-table table {
+      font-family: Verdana, sans-serif;
+      border-collapse: collapse;
+      border: 1px solid #EBEBEB;
+      margin: 10px auto;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+  }
+  .highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+  }
+  .highcharts-data-table th {
+      font-weight: 600;
+    padding: 0.5em;
+  }
+  .highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+    padding: 0.5em;
+  }
+  .highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+  }
+  .highcharts-data-table tr:hover {
+    background: #f1f7ff;
+  }
+  
+  .ld-label {
+      width:200px;
+      display: inline-block;
+  }
+  
+  .ld-url-input {
+      width: 500px; 
+  }
+  
+  .ld-time-input {
+      width: 40px;
+  }
+            </style>
+              <script>
+              var defaultData = 'http://3.86.166.85:3001/eletricidade.csv';
+              var urlInput = document.getElementById('fetchURL');
+              var pollingCheckbox = document.getElementById('enablePolling');
+              var pollingInput = document.getElementById('pollingTime');
+              
+              function createChart() {
+                Highcharts.chart('container', {
+                  chart: {
+                    type: 'spline'
+                  },
+                  title: {
+                    text: 'Monitoramento de Energia Elétrica GRID'
+                  },
+                  accessibility: {
+                    announceNewData: {
+                      enabled: true,
+                      minAnnounceInterval: 15000,
+                      announcementFormatter: function (allSeries, newSeries, newPoint) {
+                        if (newPoint) {
+                          return 'New point added. Value: ' + newPoint.y;
+                        }
+                        return false;
+                      }
+                    }
+                  },
+                  data: {
+                    csvURL: urlInput.value,
+                    enablePolling: pollingCheckbox.checked === true,
+                    dataRefreshRate: parseInt(pollingInput.value, 10)
+                  }
+                });
+              
+                if (pollingInput.value < 1 || !pollingInput.value) {
+                  pollingInput.value = 1;
+                }
+              }
+              
+              urlInput.value = defaultData;
+              
+              // We recreate instead of using chart update to make sure the loaded CSV
+              // and such is completely gone.
+              pollingCheckbox.onchange = urlInput.onchange = pollingInput.onchange = createChart;
+              
+              // Create the chart
+              createChart();
+              
+              </script>
+</body>
+</html>

@@ -6,6 +6,15 @@ const express = require('express')
 
 const app = express()
 
+const handlebars = require('express-handlebars')
+
+const path = require('path')
+
+app.use(express.static(path.join(__dirname, "public")))
+
+app.engine('handlebars', handlebars({defaultLayout: 'main'}))
+app.set('view engine', 'handlebars')
+
 const device = awsIoT.device ({
     keyPath: "cert.key",
     certPath: "cert.pem",
@@ -47,14 +56,18 @@ device.on("message", async(topic, payload)=>{
 
 app.get('/eletricidade.csv', async (req, res)=> {
   const eletricidade = await Leitura.find({type: 'eletricidade'}).sort({time: 'desc'}).limit(10)
-  let datagraph = `time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN <br>`
+  let datagraph = `time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN \n`
   eletricidade.forEach(function(eletricidade){
 
-    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}<br>` 
+    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}\n` 
 })
   res.send(datagraph)
 })
  
+app.get('/monitorene', async (req, res)=> {
+    res.render(__dirname + '/views/layouts/grafico')
+})   
+
 app.listen(3001,()=>{
     console.log("Servidor Ene Conectado")
 })
