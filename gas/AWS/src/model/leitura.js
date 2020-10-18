@@ -2,6 +2,8 @@ const mongoose = require('../database/db')
 
 const Schema = mongoose.Schema
 
+const { DateTime } = require('luxon')
+
 const leituraSchema = new Schema({
     pulso_gas:{
         type: Number
@@ -14,7 +16,7 @@ const leituraSchema = new Schema({
     },
     time: {
         type: Date, 
-        default: Date.now
+        default: DateTime.local().setZone('America/Sao_Paulo')
     }
 })
 

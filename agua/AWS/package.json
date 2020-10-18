@@ -1,0 +1,17 @@
+{
+  "name": "aws",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeferson Bronze",
+  "license": "ISC",
+  "dependencies": {
+    "aws-iot-device-sdk": "^2.2.6",
+    "express": "^4.17.1",
+    "luxon": "^1.25.0",
+    "mongoose": "^5.10.9"
+  }
+}
