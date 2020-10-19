@@ -10,6 +10,23 @@ const handlebars = require('express-handlebars')
 
 const path = require('path')
 
+const { DateTime } = require('luxon')
+
+const credentials = require('./config/googlesheetseletricidade.json')
+
+const GoogleSpreadsheet  = require('google-spreadsheet')
+
+const { promisify } = require('util')
+
+const accessSheet = async(docId, time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN) => {
+    const doc = new GoogleSpreadsheet(docId)
+  
+    await promisify(doc.useServiceAccountAuth)(credentials)
+    const info = await promisify(doc.getInfo)()
+    const worksheet = info.worksheets[0]
+    await promisify(worksheet.addRow)({time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN})
+  } 
+
 app.use(express.static(path.join(__dirname, "public")))
 
 app.engine('handlebars', handlebars({defaultLayout: 'main'}))
@@ -51,6 +68,8 @@ device.on("message", async(topic, payload)=>{
     console.log({potencia_ApaF1,IrmsF1,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN,time})
 
     await Leitura.create({potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, type:"eletricidade", time})
+  
+    accessSheet ('1sxa_6IHl7aQNhv_sAv_uLnaQU4BJEhAQyMrug7aL6LA', DateTime.local().setZone('America/Sao_Paulo'), potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN)
 
 })
 
@@ -60,6 +79,7 @@ app.get('/eletricidade.csv', async (req, res)=> {
   eletricidade.forEach(function(eletricidade){
 
     datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}\n` 
+
 })
   res.send(datagraph)
 })
@@ -68,6 +88,7 @@ app.get('/monitorene', async (req, res)=> {
     res.render(__dirname + '/views/layouts/grafico')
 })   
 
-app.listen(4001,()=>{
+app.listen(3004,()=>{
     console.log("Servidor Ene Conectado")
 })
+

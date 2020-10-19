@@ -6,6 +6,32 @@ const express = require('express')
 
 const app = express()
 
+const handlebars = require('express-handlebars')
+
+const path = require('path')
+
+const { DateTime } = require('luxon')
+
+const credentials = require('./config/googlesheetseletricidade.json')
+
+const GoogleSpreadsheet  = require('google-spreadsheet')
+
+const { promisify } = require('util')
+
+const accessSheet = async(docId, time, fluxoAgua, volumeTotal) => {
+    const doc = new GoogleSpreadsheet(docId)
+  
+    await promisify(doc.useServiceAccountAuth)(credentials)
+    const info = await promisify(doc.getInfo)()
+    const worksheet = info.worksheets[0]
+    await promisify(worksheet.addRow)({time, fluxoAgua, volumeTotal})
+  } 
+
+app.use(express.static(path.join(__dirname, "public")))
+
+app.engine('handlebars', handlebars({defaultLayout: 'main'}))
+app.set('view engine', 'handlebars')
+
 const device = awsIoT.device ({
     keyPath: "cert.key",
     certPath: "cert.pem",
@@ -43,20 +69,26 @@ device.on("message", async(topic, payload)=>{
 
     console.log({time,fluxoAgua,volumeTotal})
 
-    await Leitura.create({fluxoAgua, volumeTotal, type:"agua"})
+    await Leitura.create({time, fluxoAgua, volumeTotal, type:"agua"})
+
+    accessSheet ('1sxa_6IHl7aQNhv_sAv_uLnaQU4BJEhAQyMrug7aL6LA', DateTime.local().setZone('America/Sao_Paulo'), fluxoAgua, volumeTotal)
 
 })
 
 app.get('/agua.csv', async (req, res)=> {
     const gas = await Leitura.find({type: 'agua'}).sort({time: 'desc'}).limit(1)
-    let datagraph = `time, fluxoAgua, volumeTotal <br>`
+    let datagraph = `time, fluxoAgua, volumeTotal \n`
     gas.forEach(function(agua){
 
-        datagraph += `${agua.time}, ${agua.fluxoAgua}, ${agua.volumeTotal}<br>` 
+        datagraph += `${agua.time}, ${agua.fluxoAgua}, ${agua.volumeTotal}\n` 
     })
     res.send(datagraph)
 })
 
-  app.listen(3003,()=>{
+app.get('/monitoragua', async (req, res)=> {
+    res.render(__dirname + '/views/layouts/grafico')
+}) 
+
+  app.listen(3001,()=>{
       console.log("Servidor Agua Conectado")
   })

@@ -6,6 +6,33 @@ const express = require('express')
 
 const app = express()
 
+const handlebars = require('express-handlebars')
+
+const path = require('path')
+
+const { DateTime } = require('luxon')
+
+const credentials = require('./config/googlesheetseletricidade.json')
+
+const GoogleSpreadsheet  = require('google-spreadsheet')
+
+const { promisify } = require('util')
+
+const accessSheet = async(docId, time, pulso_gas, volume_total) => {
+    const doc = new GoogleSpreadsheet(docId)
+  
+    await promisify(doc.useServiceAccountAuth)(credentials)
+    const info = await promisify(doc.getInfo)()
+    const worksheet = info.worksheets[0]
+    await promisify(worksheet.addRow)({time, pulso_gas, volume_total})
+  } 
+
+app.use(express.static(path.join(__dirname, "public")))
+
+app.engine('handlebars', handlebars({defaultLayout: 'main'}))
+app.set('view engine', 'handlebars')
+
+
 const device = awsIoT.device ({
     keyPath: "cert.key",
     certPath: "cert.pem",
@@ -45,18 +72,24 @@ device.on("message", async(topic, payload)=>{
 
     await Leitura.create({pulso_gas, volume_total, type:"gas"})
 
+    accessSheet ('1sxa_6IHl7aQNhv_sAv_uLnaQU4BJEhAQyMrug7aL6LA', DateTime.local().setZone('America/Sao_Paulo'), pulso_gas, volume_total)
+
 })
 
 app.get('/gas.csv', async (req, res)=> {
     const gas = await Leitura.find({type: 'gas'}).sort({time: 'desc'}).limit(1)
-    let datagraph = `time, volume_total, pulso_gas <br>`
+    let datagraph = `time, volume_total, pulso_gas \n`
     gas.forEach(function(gas){
 
-        datagraph += `${gas.time}, ${gas.volume_total}, ${gas.pulso_gas}<br>` 
+        datagraph += `${gas.time}, ${gas.volume_total}, ${gas.pulso_gas}\n` 
     })
     res.send(datagraph)
 })
 
-  app.listen(3002,()=>{
+app.get('/monitorgas', async (req, res)=> {
+    res.render(__dirname + '/views/layouts/grafico')
+}) 
+
+  app.listen(3003,()=>{
       console.log("Servidor Gas Conectado")
   })
