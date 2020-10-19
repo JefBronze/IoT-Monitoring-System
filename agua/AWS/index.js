@@ -69,7 +69,7 @@ device.on("message", async(topic, payload)=>{
 
     console.log({time,fluxoAgua,volumeTotal})
 
-    await Leitura.create({time, fluxoAgua, volumeTotal, type:"agua"})
+    await Leitura.create({fluxoAgua, volumeTotal, type:"agua", time})
 
     accessSheet ('1sxa_6IHl7aQNhv_sAv_uLnaQU4BJEhAQyMrug7aL6LA', DateTime.local().setZone('America/Sao_Paulo'), fluxoAgua, volumeTotal)
 

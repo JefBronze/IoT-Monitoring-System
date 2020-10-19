@@ -70,7 +70,7 @@ device.on("message", async(topic, payload)=>{
 
     console.log({time,pulso_gas,volume_total})
 
-    await Leitura.create({pulso_gas, volume_total, type:"gas"})
+    await Leitura.create({pulso_gas, volume_total, type:"gas", time})
 
     accessSheet ('1sxa_6IHl7aQNhv_sAv_uLnaQU4BJEhAQyMrug7aL6LA', DateTime.local().setZone('America/Sao_Paulo'), pulso_gas, volume_total)
 
