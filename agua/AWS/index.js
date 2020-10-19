@@ -75,7 +75,7 @@ device.on("message", async(topic, payload)=>{
 
 })
 
-app.get('/monitorgas', async(req, res) => {
+app.get('/monitoragua', async(req, res) => {
     const agua = await Leitura.find({type: 'agua'}).sort({time: 'desc'}).limit(1)
 
     agua.forEach(function(agua){
@@ -84,9 +84,6 @@ app.get('/monitorgas', async(req, res) => {
     })
 })
 
-app.get('/monitoragua', async (req, res)=> {
-    res.render(__dirname + '/views/layouts/grafico')
-}) 
 
   app.listen(3001,()=>{
       console.log("Servidor Agua Conectado")
