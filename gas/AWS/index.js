@@ -76,20 +76,15 @@ device.on("message", async(topic, payload)=>{
 
 })
 
-app.get('/gas.csv', async (req, res)=> {
+app.get('/monitorgas', async(req, res) => {
     const gas = await Leitura.find({type: 'gas'}).sort({time: 'desc'}).limit(1)
-    let datagraph = `time, pulso_gas, volume_total \n`
+
     gas.forEach(function(gas){
 
-        datagraph += `${gas.time}, ${gas.pulso_gas}, ${gas.volume_total}\n` 
+        res.render(__dirname + '/views/layouts/grafico', {volume: gas.volume_total})
     })
-    res.send(datagraph)
-})
-
-app.get('/monitorgas', async (req, res)=> {
-    res.render(__dirname + '/views/layouts/grafico')
 }) 
 
-  app.listen(3003,()=>{
-      console.log("Servidor Gas Conectado")
-  })
+app.listen(3003,()=>{
+    console.log("Servidor Gas Conectado")
+})
