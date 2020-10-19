@@ -72,16 +72,16 @@ device.on("message", async(topic, payload)=>{
 
     await Leitura.create({pulso_gas, volume_total, type:"gas", time})
 
-    accessSheet ('1sxa_6IHl7aQNhv_sAv_uLnaQU4BJEhAQyMrug7aL6LA', DateTime.local().setZone('America/Sao_Paulo'), pulso_gas, volume_total)
+    accessSheet ('1Pa6iG5HG4xwAfEoZ1PIimpI48xKpOKtsClJqMpwJGs0', DateTime.local().setZone('America/Sao_Paulo'), pulso_gas, volume_total)
 
 })
 
 app.get('/gas.csv', async (req, res)=> {
     const gas = await Leitura.find({type: 'gas'}).sort({time: 'desc'}).limit(1)
-    let datagraph = `time, volume_total, pulso_gas \n`
+    let datagraph = `time, pulso_gas, volume_total \n`
     gas.forEach(function(gas){
 
-        datagraph += `${gas.time}, ${gas.volume_total}, ${gas.pulso_gas}\n` 
+        datagraph += `${gas.time}, ${gas.pulso_gas}, ${gas.volume_total}\n` 
     })
     res.send(datagraph)
 })

@@ -69,7 +69,7 @@ device.on("message", async(topic, payload)=>{
 
     await Leitura.create({potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, type:"eletricidade", time})
   
-    accessSheet ('1sxa_6IHl7aQNhv_sAv_uLnaQU4BJEhAQyMrug7aL6LA', DateTime.local().setZone('America/Sao_Paulo'), potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN)
+    accessSheet ('1S1sNn8MLxH-MfGXJsKUBOCVE0f46Iop8xAPoiu3mH30', DateTime.local().setZone('America/Sao_Paulo'), potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN)
 
 })
 
