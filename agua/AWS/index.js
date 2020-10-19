@@ -75,14 +75,13 @@ device.on("message", async(topic, payload)=>{
 
 })
 
-app.get('/agua.csv', async (req, res)=> {
-    const gas = await Leitura.find({type: 'agua'}).sort({time: 'desc'}).limit(1)
-    let datagraph = `time, fluxoAgua, volumeTotal \n`
-    gas.forEach(function(agua){
+app.get('/monitorgas', async(req, res) => {
+    const agua = await Leitura.find({type: 'agua'}).sort({time: 'desc'}).limit(1)
 
-        datagraph += `${agua.time}, ${agua.fluxoAgua}, ${agua.volumeTotal}\n` 
+    agua.forEach(function(agua){
+
+        res.render(__dirname + '/views/layouts/grafico', {volume: agua.volumeTotal})
     })
-    res.send(datagraph)
 })
 
 app.get('/monitoragua', async (req, res)=> {
