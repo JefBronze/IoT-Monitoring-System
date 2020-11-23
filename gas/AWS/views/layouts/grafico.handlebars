@@ -5,121 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gráfico de Monitoramento de Gás GRID</title>
     <link rel="stylesheet" href="/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 </head>
 <body>
-
-
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
-<figure class="highcharts-figure">
-    <div id="container"></div>
-    <p class="highcharts-description">
-    </p>
-</figure>
-
-<script>
-  Highcharts.chart('container', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Monitoramento de Gás'
-    },
-    xAxis: {
-        categories: ['Volume Total']
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: 'Total de gás consumido'
-        },
-        stackLabels: {
-            enabled: true,
-            style: {
-                fontWeight: 'bold',
-                color: ( // theme
-                    Highcharts.defaultOptions.title.style &&
-                    Highcharts.defaultOptions.title.style.color
-                ) || 'gray'
-            }
-        }
-    },
-    legend: {
-        align: 'right',
-        x: -30,
-        verticalAlign: 'top',
-        y: 25,
-        floating: true,
-        backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || 'white',
-        borderColor: '#CCC',
-        borderWidth: 1,
-        shadow: false
-    },
-    tooltip: {
-        headerFormat: '<b>{point.x}</b><br/>',
-        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
-    },
-    plotOptions: {
-        column: {
-            stacking: 'normal',
-            dataLabels: {
-                enabled: true
-            }
-        }
-    },
-    series: [{
-        name: 'Gás',
-        data: [{{volume}}]
-    }]
-});
-
-</script>
-<style>
-  #container {
-    height: 400px; 
-}
-
-.highcharts-figure, .highcharts-data-table table {
-    min-width: 100%; 
-    max-width: 800px;
-    margin: 1em auto;
-}
-
-.highcharts-data-table table {
-    font-family: Verdana, sans-serif;
-    border-collapse: collapse;
-    border: 1px solid #EBEBEB;
-    margin: 10px auto;
-    text-align: center;
-    width: 100%;
-    max-width: 500px;
-}
-.highcharts-data-table caption {
-    padding: 1em 0;
-    font-size: 1.2em;
-    color: #555;
-}
-.highcharts-data-table th {
-	font-weight: 600;
-    padding: 0.5em;
-}
-.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
-    padding: 0.5em;
-}
-.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
-    background: #f8f8f8;
-}
-.highcharts-data-table tr:hover {
-    background: #f1f7ff;
-}
-
-</style>
-
-
-
+<center>
+<canvas id="chartjs-1" class="chartjs" width="356" height="178" style="display: block; width: 356px; height: 178px;"></canvas>
+</center>
+<script>new Chart(document.getElementById("chartjs-1"),{"type":"bar","data":{"labels":["Volume"],"datasets":[{"label":"Monitor de Gás","data":[{{volume}}],"fill":false,"backgroundColor":["rgba(255, 99, 132, 0.2)","rgba(255, 159, 64, 0.2)","rgba(255, 205, 86, 0.2)","rgba(75, 192, 192, 0.2)","rgba(54, 162, 235, 0.2)","rgba(153, 102, 255, 0.2)","rgba(201, 203, 207, 0.2)"],"borderColor":["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],"borderWidth":1}]},"options":{"scales":{"yAxes":[{"ticks":{"beginAtZero":true}}]}}});</script>
+  
 </body>
 </html>
