@@ -58,7 +58,7 @@ device.on("error",()=>{
 
 device.on("message", async(topic, payload)=>{
     
-    const {time,potencia_ApaF1,IrmsF1,supplyVoltage1,potencia_ApaF2,IrmsF2,supplyVoltage2,potencia_ApaN,IrmsN,Frequency} = await JSON.parse(payload)
+    const {time,supplyVoltage1,potencia_ApaF1,IrmsF1,supplyVoltage2,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN,Frequency} = await JSON.parse(payload)
     //const leituras = await JSON.parse(payload.toString())
     //console.log({leituras})
     //console.log(await JSON.parse(payload))
