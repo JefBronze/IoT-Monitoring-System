@@ -18,13 +18,13 @@ const GoogleSpreadsheet  = require('google-spreadsheet')
 
 const { promisify } = require('util')
 
-const accessSheet = async(docId, time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency) => {
+const accessSheet = async(docId, time, supplyVoltage1, potencia_ApaF1, IrmsF1, supplyVoltage2, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency) => {
     const doc = new GoogleSpreadsheet(docId)
   
     await promisify(doc.useServiceAccountAuth)(credentials)
     const info = await promisify(doc.getInfo)()
     const worksheet = info.worksheets[0]
-    await promisify(worksheet.addRow)({time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency})
+    await promisify(worksheet.addRow)({time, supplyVoltage1, potencia_ApaF1, IrmsF1, supplyVoltage2, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency})
   } 
 
 app.use(express.static(path.join(__dirname, "public")))
@@ -58,16 +58,16 @@ device.on("error",()=>{
 
 device.on("message", async(topic, payload)=>{
     
-    const {time,potencia_ApaF1,IrmsF1,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN,Frequency} = await JSON.parse(payload)
+    const {time,potencia_ApaF1,IrmsF1,supplyVoltage1,potencia_ApaF2,IrmsF2,supplyVoltage2,potencia_ApaN,IrmsN,Frequency} = await JSON.parse(payload)
     //const leituras = await JSON.parse(payload.toString())
     //console.log({leituras})
     //console.log(await JSON.parse(payload))
-    if (potencia_ApaF1 == undefined || IrmsF1 == undefined || potencia_ApaF2 == undefined || IrmsF2 == undefined || potencia_ApaN == undefined || IrmsN == undefined || Frequency == undefined) {
+    if (supplyVoltage1 == undefined || potencia_ApaF1 == undefined || IrmsF1 == undefined || supplyVoltage2 == undefined || potencia_ApaF2 == undefined || IrmsF2 == undefined || potencia_ApaN == undefined || IrmsN == undefined || Frequency == undefined) {
         return false
     }
-    console.log({potencia_ApaF1,IrmsF1,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN,Frequency,time})
+    console.log({supplyVoltage1,potencia_ApaF1,IrmsF1,supplyVoltage2,potencia_ApaF2,IrmsF2,potencia_ApaN,IrmsN,Frequency,time})
 
-    await Leitura.create({potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency, type:"eletricidade", time})
+    await Leitura.create({supplyVoltage1, potencia_ApaF1, IrmsF1, supplyVoltage2, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency, type:"eletricidade", time})
   
     accessSheet ('1S1sNn8MLxH-MfGXJsKUBOCVE0f46Iop8xAPoiu3mH30', DateTime.local().setZone('America/Sao_Paulo'), potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency)
 
@@ -75,10 +75,10 @@ device.on("message", async(topic, payload)=>{
 
 app.get('/eletricidade.csv', async (req, res)=> {
   const eletricidade = await Leitura.find({type: 'eletricidade'}).sort({time: 'desc'}).limit(10)
-  let datagraph = `time, potencia_ApaF1, IrmsF1, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency \n`
+  let datagraph = `time, supplyVoltage1, potencia_ApaF1, IrmsF1, supplyVoltage2, potencia_ApaF2, IrmsF2, potencia_ApaN, IrmsN, Frequency \n`
   eletricidade.forEach(function(eletricidade){
 
-    datagraph += `${eletricidade.time}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}, ${eletricidade.Frequency}\n` 
+    datagraph += `${eletricidade.time}, ${eletricidade.supplyVoltage1}, ${eletricidade.potencia_ApaF1}, ${eletricidade.IrmsF1}, ${eletricidade.supplyVoltage2}, ${eletricidade.potencia_ApaF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaN}, ${eletricidade.IrmsN}, ${eletricidade.Frequency}\n` 
 
 })
   res.send(datagraph)
