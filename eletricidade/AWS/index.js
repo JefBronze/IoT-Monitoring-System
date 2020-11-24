@@ -18,13 +18,13 @@ const GoogleSpreadsheet  = require('google-spreadsheet')
 
 const { promisify } = require('util')
 
-const accessSheet = async(docId, time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, IrmsN, potencia_ApaN, Frequency) => {
+const accessSheet = async(docId, time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, Frequency) => {
     const doc = new GoogleSpreadsheet(docId)
   
     await promisify(doc.useServiceAccountAuth)(credentials)
     const info = await promisify(doc.getInfo)()
     const worksheet = info.worksheets[0]
-    await promisify(worksheet.addRow)({time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, IrmsN, potencia_ApaN, Frequency})
+    await promisify(worksheet.addRow)({time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, Frequency})
   } 
 
 app.use(express.static(path.join(__dirname, "public")))
@@ -58,27 +58,27 @@ device.on("error",()=>{
 
 device.on("message", async(topic, payload)=>{
     
-    const {time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, IrmsN, potencia_ApaN, Frequency} = await JSON.parse(payload)
+    const {time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, Frequency} = await JSON.parse(payload)
     //const leituras = await JSON.parse(payload.toString())
     //console.log({leituras})
     //console.log(await JSON.parse(payload))
-    if (supplyVoltageF1 == undefined || IrmsF1 == undefined || potencia_ApaF1 == undefined || supplyVoltageF2 == undefined || IrmsF2 == undefined || potencia_ApaF2 == undefined || supplyVoltageN == undefined || IrmsN == undefined || potencia_ApaN == undefined || Frequency == undefined) {
+    if (supplyVoltageF1 == undefined || IrmsF1 == undefined || potencia_ApaF1 == undefined || supplyVoltageF2 == undefined || IrmsF2 == undefined || potencia_ApaF2 == undefined || supplyVoltageN == undefined || Frequency == undefined) {
         return false
     }
-    console.log({supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, IrmsN, potencia_ApaN, Frequency,time})
+    console.log({supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, Frequency,time})
 
-    await Leitura.create({supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, IrmsN, potencia_ApaN, Frequency, type:"eletricidade", time})
+    await Leitura.create({supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, Frequency, type:"eletricidade", time})
   
-    accessSheet ('1S1sNn8MLxH-MfGXJsKUBOCVE0f46Iop8xAPoiu3mH30', DateTime.local().setZone('America/Sao_Paulo'), supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, IrmsN, potencia_ApaN, Frequency)
+    accessSheet ('1S1sNn8MLxH-MfGXJsKUBOCVE0f46Iop8xAPoiu3mH30', DateTime.local().setZone('America/Sao_Paulo'), supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, Frequency)
 
 })
 
 app.get('/eletricidade.csv', async (req, res)=> {
   const eletricidade = await Leitura.find({type: 'eletricidade'}).sort({time: 'desc'}).limit(10)
-  let datagraph = `time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, IrmsN, potencia_ApaN, Frequency \n`
+  let datagraph = `time, supplyVoltageF1, IrmsF1, potencia_ApaF1, supplyVoltageF2, IrmsF2, potencia_ApaF2, supplyVoltageN, Frequency \n`
   eletricidade.forEach(function(eletricidade){
 
-    datagraph += `${eletricidade.time}, ${eletricidade.supplyVoltageF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF1}, ${eletricidade.supplyVoltageF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaF2}, ${eletricidade.supplyVoltageF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF1}, ${eletricidade.supplyVoltageN}, ${eletricidade.IrmsN}, ${eletricidade.potencia_ApaN}, ${eletricidade.Frequency}\n` 
+    datagraph += `${eletricidade.time}, ${eletricidade.supplyVoltageF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF1}, ${eletricidade.supplyVoltageF2}, ${eletricidade.IrmsF2}, ${eletricidade.potencia_ApaF2}, ${eletricidade.supplyVoltageF1}, ${eletricidade.IrmsF1}, ${eletricidade.potencia_ApaF1}, ${eletricidade.supplyVoltageN}, ${eletricidade.Frequency}\n` 
 
 })
   res.send(datagraph)
